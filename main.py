@@ -273,24 +273,42 @@ create_tables()
 
 # main loop menu6
 while True:
-    print("\nMain Menu:")
-    print("1. Manage Books")
-    print("2. Manage Members")
-    print("3. Reports")
-    print("4. Exit")
-    option = input("Enter your choice: ")
+    if (is_staff == 1):
+            print("\nMain Menu:")
+            print("1. Manage Books")
+            print("2. Manage Members")
+            print("3. Reports")
+            print("4. Exit")
+            option = input("Enter your choice: ")
 
-    if option == "1":
-        manage_books()
-    elif option == "2":
-        manage_members()
-    elif option == "3":
-        reports()
-    elif option == "4":
-        print("Exiting the program.")
-        break
-    else:
-        print("Invalid choice. Please enter a valid option.")
+            if option == "1":
+                manage_books()
+            elif option == "2":
+                manage_members()
+            elif option == "3":
+                reports()
+            elif option == "4":
+                print("Exiting the program.")
+                break
+            else:
+                print("Invalid choice. Please enter a valid option.")
+    else :
+            print("\nMain Menu:")
+            print("1. Show Available Books")
+            print("2. Issue / Return Books")
+            print("3. Exit")
+            option = input("Enter your choice: ")
+
+            if option == "1":
+                show_available_books()
+            elif option == "2":
+                issue_return_books()
+            elif option == "3":
+                print("Exiting the program.") 
+                break
+            else:
+                print("Invalid choice.")
+
 
 # Close the database connection
 mydb.close()
