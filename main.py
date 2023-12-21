@@ -116,7 +116,9 @@ def manage_books():
         print("2. Update Book")
         print("3. Delete Book")
         print("4. Show Available Books")
-        print("5. Return to main menu")
+        print("5. Issue / Return Books")
+        print("6. More")
+        print("7. Return to main menu")
         choice = input("Enter your choice: ")
 
         if choice == "1":
@@ -138,6 +140,11 @@ def manage_books():
         elif choice == "4":
             show_available_books()
         elif choice == "5":
+            issue_return_books()
+        elif choice == "6":
+            # Call the features page function
+            features_page()
+        elif choice == "7":
             break
         else:
             print("Invalid choice. Please enter a valid option.")
@@ -148,7 +155,8 @@ def manage_members():
         print("\nManage Members:")
         print("1. Add Member")
         print("2. Show Members")
-        print("3. Return to main menu")
+        print("3. Show Member Details")
+        print("4. Return to main menu")
         choice = input("Enter your choice: ")
 
         if choice == "1":
@@ -158,6 +166,8 @@ def manage_members():
         elif choice == "2":
             show_members()
         elif choice == "3":
+            show_member_details()
+        elif choice == "4":
             break
         else:
             print("Invalid choice. Please enter a valid option.")
@@ -171,8 +181,7 @@ def features_page():
         print("2. Renew a Book")
         print("3. Calculate Fines")
         print("4. Show Book Details")
-        print("5. Show Member Details")
-        print("6. Return to main menu")
+        print("5. Return to main menu")
         choice = input("Enter your choice: ")
 
         if choice == "1":
@@ -184,8 +193,6 @@ def features_page():
         elif choice == "4":
             show_book_details()
         elif choice == "5":
-            show_member_details()
-        elif choice == "6":
             break
         else:
             print("Invalid choice. Please enter a valid option.")
@@ -269,10 +276,8 @@ while True:
     print("\nMain Menu:")
     print("1. Manage Books")
     print("2. Manage Members")
-    print("3. Issue/Return Books")
-    print("4. Reports")
-    print("5. Features")
-    print("6. Exit")
+    print("3. Reports")
+    print("4. Exit")
     option = input("Enter your choice: ")
 
     if option == "1":
@@ -280,12 +285,8 @@ while True:
     elif option == "2":
         manage_members()
     elif option == "3":
-        issue_return_books()
-    elif option == "4":
         reports()
-    elif option == "5":
-        features_page()  # Call the features page function
-    elif option == "6":
+    elif option == "4":
         print("Exiting the program.")
         break
     else:
