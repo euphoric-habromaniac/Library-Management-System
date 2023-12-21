@@ -6,6 +6,8 @@
 
 This is a project made for the Class 12 CBSE BOARD Practicals, but in its essence its a library management system.
 
+## pass for staff is:      q94fz7c2ir
+
 
 ## Table of Contents
 
