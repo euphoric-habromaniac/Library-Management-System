@@ -2,7 +2,8 @@
 
 ## Overview
 
-Briefly describe the purpose and functionality of your project.
+This is a project made for the Class 12 CBSE BOARD Practicals, but in its essence its a library management system.
+
 
 ## Table of Contents
 
