@@ -24,7 +24,8 @@ def create_tables():
     cursor.execute("CREATE TABLE IF NOT EXISTS books (id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255), author VARCHAR(255), available BOOLEAN)")
     
     # Creating a table to store members
-    cursor.execute("CREATE TABLE IF NOT EXISTS members (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), email VARCHAR(255))")
+    cursor.execute("CREATE TABLE IF NOT EXISTS members (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), email VARCHAR(255), fines DECIMAL(10, 2) DEFAULT 0.0)")
+    # Add 'fines' column with DECIMAL(10, 2) to store decimal values with 2 decimal places, and a default value of 0.0
     
     # Creating a table to track book lending
     cursor.execute("CREATE TABLE IF NOT EXISTS book_lending (id INT AUTO_INCREMENT PRIMARY KEY, book_id INT, member_id INT, return_date DATE, FOREIGN KEY (book_id) REFERENCES books(id), FOREIGN KEY (member_id) REFERENCES members(id))")
@@ -35,14 +36,23 @@ def reports():
     """
     Generate reports for the library.
     """
-
+    # Print the reports menu
+    print("\nReports Menu")
+    print("1. List of all books that are currently checked out.")
+    print("2. List of all members who have overdue books.")
+    print("3. Fines report for a particular member")
+    print("4. Number of books borrowed by each member")
+    print("5. Most popular books")
+    print("6. Least popular books")
+    print("7. Return to previous menu")
+    
     # Get the user's choice of report
     choice = input("Select a report to generate: ")
 
     # Generate the report
     if choice == "1":
         # List of all books that are currently checked out.
-        cursor.execute("SELECT book_id, title, author FROM books WHERE available = False")
+        cursor.execute("SELECT id, title, author FROM books WHERE available = False")
         books = cursor.fetchall()
         if books:
             print("List of all books that are currently checked out:")
@@ -53,7 +63,7 @@ def reports():
 
     elif choice == "2":
         # List of all members who have overdue books.
-        cursor.execute("SELECT member_id, name FROM members WHERE id IN (SELECT member_id FROM book_lending WHERE return_date < CURDATE())")
+        cursor.execute("SELECT id, name FROM members WHERE id IN (SELECT member_id FROM book_lending WHERE return_date < CURDATE())")
         members = cursor.fetchall()
         if members:
             print("List of all members who have overdue books:")
@@ -104,6 +114,9 @@ def reports():
                 print(f"ID: {book[0]}, Number of borrows: {book[1]}")
         else:
             print("No books have been borrowed.")
+
+    elif choice == "7":
+        return
 
     else:
         print("Invalid choice.")
