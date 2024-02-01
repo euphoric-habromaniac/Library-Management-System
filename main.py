@@ -21,14 +21,14 @@ username, is_staff = login_signup_page()
 # Function to create necessary tables in the database
 def create_tables():
     # Creating a table to store books
-    cursor.execute("CREATE TABLE IF NOT EXISTS books (id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255), author VARCHAR(255), available BOOLEAN)")
+    cursor.execute("CREATE TABLE IF NOT EXISTS books (book_id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255), author VARCHAR(255), available BOOLEAN)")
     
     # Creating a table to store members
-    cursor.execute("CREATE TABLE IF NOT EXISTS members (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), email VARCHAR(255), fines DECIMAL(10, 2) DEFAULT 0.0)")
+    cursor.execute("CREATE TABLE IF NOT EXISTS members (member_id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), email VARCHAR(255), fines DECIMAL(10, 2) DEFAULT 0.0)")
     # Add 'fines' column with DECIMAL(10, 2) to store decimal values with 2 decimal places, and a default value of 0.0
     
     # Creating a table to track book lending
-    cursor.execute("CREATE TABLE IF NOT EXISTS book_lending (id INT AUTO_INCREMENT PRIMARY KEY, book_id INT, member_id INT, return_date DATE, FOREIGN KEY (book_id) REFERENCES books(id), FOREIGN KEY (member_id) REFERENCES members(id))")
+    cursor.execute("CREATE TABLE IF NOT EXISTS book_lending (id INT AUTO_INCREMENT PRIMARY KEY, book_id INT, member_id INT, return_date DATE, FOREIGN KEY (book_id) REFERENCES books(book_id), FOREIGN KEY (member_id) REFERENCES members(member_id))")
 
 
 #function to make reports
@@ -280,6 +280,21 @@ def issue_return_books():
         else:
             print("Invalid choice. Please enter a valid option.")
 
+# Return books function for the user side of the menu to retun books
+def return_books():
+    while True:
+        print("\nReturn Books:")
+        print("1. Return Book")
+        print("2. Return to main menu")
+        choice = input("Enter your choice: ")
+
+        if choice == "1":
+            book_id = input("Enter the ID of the book to return: ")
+            return_book(book_id)
+        elif choice == "2":
+            break
+        else:
+            print("Invalid choice. Please enter a valid option.")
 
 # Creating necessary tables
 create_tables()
@@ -308,14 +323,14 @@ while True:
     else :
             print("\nMain Menu:")
             print("1. Show Available Books")
-            print("2. Issue / Return Books")
+            print("2. Return Book(s)")
             print("3. Exit")
             option = input("Enter your choice: ")
 
             if option == "1":
                 show_available_books()
             elif option == "2":
-                issue_return_books()
+                return_books()
             elif option == "3":
                 print("Exiting the program.") 
                 break
