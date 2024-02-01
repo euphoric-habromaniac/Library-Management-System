@@ -33,6 +33,9 @@ def reserve_book():
 def renew_book():
     book_id = input("Enter the book ID to renew: ")
 
+    # Select the library database
+    cursor.execute("USE library_db")
+
     # Check if the book is borrowed by the member
     cursor.execute("SELECT status, member_id FROM books WHERE book_id = %s", (book_id,))
     book_data = cursor.fetchone()
