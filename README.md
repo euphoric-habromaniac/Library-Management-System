@@ -1,72 +1,53 @@
-# (REFER TO THE ATTACHED DOCUMENT FOR LIKE THE OFFICIAL PDF FILE OF THIS THING)
+# Library Management System
 
-# LIBRARY MANAGEMENT SYSTEM
+## Project Name:
 
-## Overview
+Library Management System
 
-This is a project made for the Class 12 CBSE BOARD Practicals, but in its essence its a library management system.
+## Brief Description:
 
-## pass for staff is:      q94fz7c2ir
+A basic library management system implemented in Python with SQL as a backend.
 
+## Programming Language:
 
-## Table of Contents
+Python
 
-- [Main.py](#mainpy)
-- [Features01.py](#features01py)
-- [Login_Signup.py](#login_signuppy)
+## Key Features and Functionalities:
 
-## Main.py
+### Book Management Module:
+- Add new books with details such as title, author, and category.
+- Update book information including title, author, and category.
+- Search and retrieve books based on title, author, or category.
 
-The **main.py** file serves as the main program for the library management system. It includes functionality for managing books, members, issuing/returning books, generating reports, and accessing additional features.
+### Member Management Module:
+- Register new members with information like name, contact details, and membership type.
+- Maintain and update member records.
+- Retrieve member information using names or member IDs.
 
-### Features
+## Installation and Setup:
 
-1. **Manage Books**
-   - Add, update, delete books
-   - Show available books
+To set up the Library Management System, follow these steps:
 
-2. **Manage Members**
-   - Add members
-   - Show members
+1. Clone the repository to your local machine using the following command in your terminal:
 
-3. **Issue/Return Books**
-   - Issue books to members
-   - Return books to the library
+    ```bash
+    git clone https://github.com/euphoric-habromaniac/Library-Management-System
+    ```
 
-4. **Reports**
-   - Generate various reports such as checked-out books, overdue members, fines, etc.
+2. Navigate to the cloned repository in the terminal.
 
-5. **Features Page**
-   - Additional features like reserving books, renewing books, calculating fines, showing book and member details.
+3. Run the main.py file to initiate the program.
 
-6. **Database Connection**
-   - Connects to a MySQL database to store information.
+4. Follow the on-screen instructions to interact with the Library Management System.
 
-### Usage
+## Usage Instructions:
 
-1. Ensure you have a MySQL server running.
-2. Modify the database connection details in the code.
-3. Run `main.py` to start the library management system.
+Simply run the `main.py` file, and the program will guide you through the usage of the Library Management System.
 
-## Features01.py
+## Licensing Information:
 
-The **features01.py** file contains additional features related to book reservations, renewals, ...
+This project is licensed under the MIT license.
 
-## Login_Signup.py
+## Contact Information:
 
-The **login_signup.py** file manages user authentication and sign-up functionalities.
-
-### Features
-
-- **Create Database**
-  - Creates the necessary database and user table for login/signup.
-
-- **Signup**
-  - Allows users to sign up with a username, password, and staff status.
-
-- **Login**
-  - Authenticates users based on provided credentials.
-
-### Usage
-
-1. Run `login_signup_page()` to access the login/signup page.
+For any queries or feedback, please reach out via email: pranjalofficial1024@gmail.com
