@@ -1,9 +1,10 @@
+
 # main.py
 
 import mysql.connector as sqltor
 from tabulate import tabulate
 from features01 import *  # Import functions from features01.py
-from login_signup import login_signup_page  # Import the login/signup page
+from login_signup import *  # Import the login/signup page
 
 # Create a connection to the MySQL server (without specifying database)
 mydb = sqltor.connect(host="localhost", user="root", password="1234")
@@ -52,18 +53,18 @@ def reports():
     # Generate the report
     if choice == "1":
         # List of all books that are currently checked out.
-        cursor.execute("SELECT id, title, author FROM books WHERE available = False")
+        cursor.execute("SELECT book_id, title, author FROM books WHERE available = False")
         books = cursor.fetchall()
         if books:
             print("List of all books that are currently checked out:")
             for book in books:
                 print(f"ID: {book[0]}, Title: {book[1]}, Author: {book[2]}")
-        else:
-            print("No books are currently checked out.")
+            else:
+                print("No books are currently checked out.")
 
     elif choice == "2":
         # List of all members who have overdue books.
-        cursor.execute("SELECT id, name FROM members WHERE id IN (SELECT member_id FROM book_lending WHERE return_date < CURDATE())")
+        cursor.execute("SELECT member_id, name FROM members WHERE member_id IN (SELECT member_id FROM book_lending WHERE return_date < CURDATE())")
         members = cursor.fetchall()
         if members:
             print("List of all members who have overdue books:")
@@ -75,13 +76,13 @@ def reports():
     elif choice == "3":
         # Fines report for a particular member.
         member_id = input("Enter the ID of the member: ")
-        cursor.execute("SELECT fines FROM members WHERE id = %s", (member_id,))
-        fines = cursor.fetchone()[0]
+        cursor.execute("SELECT fines FROM members WHERE member_id = %s", (member_id,))
+        fines = cursor.fetchone()
         if fines:
-            print(f"Fines for member ID {member_id}: {fines}")
+            print(f"Fines for member ID {member_id}: {fines[0]}")
         else:
-            print(f"No fines for member ID {member_id}.")
-
+           print(f"No fines for member ID {member_id}.")
+           
     elif choice == "4":
         # Number of books borrowed by each member.
         cursor.execute("SELECT member_id, COUNT(*) AS num_books FROM book_lending GROUP BY member_id")
@@ -121,6 +122,7 @@ def reports():
     else:
         print("Invalid choice.")
 
+
 # Function to manage books
 def manage_books():
     while True:
@@ -142,12 +144,12 @@ def manage_books():
             book_id = input("Enter the ID of the book to update: ")
             title = input("Enter the new title of the book: ")
             author = input("Enter the new author of the book: ")
-            cursor.execute("UPDATE books SET title = %s, author = %s WHERE id = %s", (title, author, book_id))
+            cursor.execute("UPDATE books SET title = %s, author = %s WHERE book_id = %s", (title, author, book_id))
             mydb.commit()
             print("Book updated successfully!")
         elif choice == "3":
             book_id = input("Enter the ID of the book to delete: ")
-            cursor.execute("DELETE FROM books WHERE id = %s", (book_id,))
+            cursor.execute("DELETE FROM books WHERE book_id = %s", (book_id,))
             mydb.commit()
             print("Book deleted successfully!")
         elif choice == "4":
@@ -163,25 +165,44 @@ def manage_books():
             print("Invalid choice. Please enter a valid option.")
 
 # Function to manage members
+
+# Function to manage members
 def manage_members():
     while True:
         print("\nManage Members:")
         print("1. Add Member")
-        print("2. Show Members")
-        print("3. Show Member Details")
-        print("4. Return to main menu")
+        print("2. Show Member Details")
+        print("3. Return to main menu")
         choice = input("Enter your choice: ")
 
         if choice == "1":
+            # Display a table of non-staff members
+            cursor.execute("SELECT member_id, name, email FROM members WHERE member_id NOT IN (SELECT id FROM users WHERE is_staff = True)")
+            non_staff_members = cursor.fetchall()
+
+            if non_staff_members:
+                print("  ")
+                print("Non-Staff Members:")
+                print(tabulate(non_staff_members, headers=['Member ID', 'Name', 'Email']))
+            else:
+                print("No non-staff members found.")
+            # Prompt for new member information
             name = input("Enter the name of the member: ")
             email = input("Enter the email of the member: ")
+            password = input("Enter the password for the member: ")
+
+            # Add the new member to the users table
+            create_user(name, password, is_staff=False)
+
+            # Add the new member to the members table
             add_member(name, email)
+
         elif choice == "2":
-            show_members()
-        elif choice == "3":
             show_member_details()
-        elif choice == "4":
+
+        elif choice == "3":
             break
+
         else:
             print("Invalid choice. Please enter a valid option.")
 
@@ -224,21 +245,32 @@ def add_member(name, email):
 
 # Function to lend a book to a member
 def lend_book(book_id, member_id, return_date):
-    cursor.execute("UPDATE books SET available = False WHERE id = %s", (book_id,))
+    cursor.execute("UPDATE books SET available = false WHERE book_id = %s", (book_id,))
     cursor.execute("INSERT INTO book_lending (book_id, member_id, return_date) VALUES (%s, %s, %s)", (book_id, member_id, return_date))
     mydb.commit()
     print("Book lent successfully!")
 
 # Function to return a book
-def return_book(book_id):
-    cursor.execute("UPDATE books SET available = True WHERE id = %s", (book_id,))
-    cursor.execute("DELETE FROM book_lending WHERE book_id = %s", (book_id,))
-    mydb.commit()
-    print("Book returned successfully!")
+def return_book(member_id, book_id):
+    # Check if the book is actually lent to the given member
+    cursor.execute("SELECT * FROM book_lending WHERE member_id = %s AND book_id = %s", (member_id, book_id))
+    lending_info = cursor.fetchone()
+
+    if lending_info:
+        # Update the book availability to True
+        cursor.execute("UPDATE books SET available = True WHERE book_id = %s", (book_id,))
+        
+        # Delete the lending information
+        cursor.execute("DELETE FROM book_lending WHERE member_id = %s AND book_id = %s", (member_id, book_id))
+
+        mydb.commit()
+        print("Book returned successfully!")
+    else:
+        print("The book with ID {} is not currently lent to the member with ID {}.".format(book_id, member_id))
 
 # Function to show available books
 def show_available_books():
-    cursor.execute("SELECT id, title, author FROM books WHERE available = True")
+    cursor.execute("SELECT book_id, title, author FROM books WHERE available = True")
     available_books = cursor.fetchall()
     if available_books:
         print("Available Books:")
@@ -274,7 +306,8 @@ def issue_return_books():
             lend_book(book_id, member_id, return_date)
         elif choice == "2":
             book_id = input("Enter the ID of the book to return: ")
-            return_book(book_id)
+            member_id = input ("Enter the ID of the member from whom to return book from: ")
+            return_book(member_id, book_id)
         elif choice == "3":
             break
         else:
