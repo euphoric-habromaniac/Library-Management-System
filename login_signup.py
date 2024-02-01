@@ -1,7 +1,9 @@
+
 # login_signup.py
 
 import os
 import mysql.connector as sqltor
+from tabulate import tabulate 
 
 def create_database():
     db = sqltor.connect(
@@ -10,33 +12,29 @@ def create_database():
         passwd="1234",
     )
     cursor = db.cursor()
-    cursor.execute("CREATE DATABASE IF NOT EXISTS login_system")
-    db.database = "login_system"
+    cursor.execute("CREATE DATABASE IF NOT EXISTS library_db")
+    db.database = "library_db"
     cursor.execute("CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(255), password VARCHAR(255), is_staff BOOLEAN)")
     db.close()
 
 def signup():
+    is_staff = True  # Only staff members can sign up
     username = input("Enter a username: ")
     password = input("Enter a password: ")
-    is_staff = input("Are you a staff member? (yes/no): ").lower() == "yes"
 
-    if is_staff:
-        root_pass = input("Enter the root password for staff creation: ")
-        if root_pass == "q94fz7c2ir":
-            create_user(username, password, is_staff)
-            print("Staff user created successfully.")
-        else:
-            print("Invalid root password. Staff user not created.")
-    else:
+    root_pass = input("Enter the root password for staff creation: ")
+    if root_pass == "q94fz7c2ir":
         create_user(username, password, is_staff)
-        print("User created successfully.")
+        print("Staff user created successfully.")
+    else:
+        print("Invalid root password. Staff user not created.")
 
 def create_user(username, password, is_staff):
     db = sqltor.connect(
         host="localhost",
         user="root",
         passwd="1234",
-        database="login_system"
+        database="library_db"
     )
     cursor = db.cursor()
     cursor.execute("INSERT INTO users (username, password, is_staff) VALUES (%s, %s, %s)", (username, password, is_staff))
@@ -51,7 +49,7 @@ def login():
         host="localhost",
         user="root",
         passwd="1234",
-        database="login_system"
+        database="library_db"
     )
     cursor = db.cursor()
     cursor.execute("SELECT is_staff FROM users WHERE username = %s AND password = %s", (username, password))
@@ -65,13 +63,25 @@ def login():
         print("Invalid username or password.")
         return None, False
 
+def create_user(username, password, is_staff):
+    db = sqltor.connect(
+        host="localhost",
+        user="root",
+        passwd="1234",
+        database="library_db"
+    )
+    cursor = db.cursor()
+    cursor.execute("INSERT INTO users (username, password, is_staff) VALUES (%s, %s, %s)", (username, password, is_staff))
+    db.commit()
+    db.close()
+
 def login_signup_page():
     create_database()
     
     while True:
         print("\nLogin/Signup Page:")
         print("1. Login")
-        print("2. Signup")
+        print("2. Signup (only for staff members)")
         print("3. Exit")
         choice = input("Enter your choice: ")
 
