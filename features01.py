@@ -1,3 +1,6 @@
+
+#features01.py
+
 import mysql.connector
 
 # Database connection
@@ -12,9 +15,9 @@ cursor = db.cursor()
 def reserve_book():
     book_id = input("Enter the book ID to reserve: ")
     member_id = input("Enter your member ID: ")
-
+    cursor.execute("USE library_db")
     # Check if the book is available
-    cursor.execute("SELECT status FROM books WHERE book_id = %s", (book_id,))
+    cursor.execute("SELECT available FROM books WHERE book_id = %s", (book_id,))
     status = cursor.fetchone()
 
     if not status:
@@ -58,8 +61,8 @@ def renew_book():
 # Calculate fines for overdue books
 def calculate_fines():
     member_id = input("Enter your member ID: ")
-
-    cursor.execute("SELECT SUM(DATEDIFF(NOW(), due_date)) * 0.50 FROM books WHERE member_id = %s AND status = 'borrowed'", (member_id,))
+    cursor.execute("USE library_db")
+    cursor.execute("SELECT SUM(DATEDIFF(NOW(), due_date)) * 0.50 FROM books WHERE member_id = %s AND available = 0", (member_id,))
     total_fine = cursor.fetchone()[0]
 
     if total_fine:
@@ -69,6 +72,8 @@ def calculate_fines():
 
 # Show book details
 def show_book_details():
+    cursor.execute("USE library_db")
+
     book_id = input("Enter the book ID: ")
 
     cursor.execute("SELECT * FROM books WHERE book_id = %s", (book_id,))
@@ -82,12 +87,11 @@ def show_book_details():
         print("Title:", book_details[1])
         print("Author:", book_details[2])
         print("Status:", book_details[3])
-        print("Due Date:", book_details[4])
 
 # Show member details
 def show_member_details():
     member_id = input("Enter the member ID: ")
-
+    cursor.execute("USE library_db")
     cursor.execute("SELECT * FROM members WHERE member_id = %s", (member_id,))
     member_details = cursor.fetchone()
 
@@ -145,4 +149,4 @@ def issue_book():
     cursor.execute("UPDATE books SET available = 0 WHERE id = %s", (book_id,))
     cursor.execute("INSERT INTO book_issues (book_id, member_id, return_date) VALUES (%s, %s, %s)", (book_id, member_id, return_date))
     db.commit()
-    print("Book issued successfully!")
+    print("Book issued successfully!")
